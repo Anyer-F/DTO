@@ -4,23 +4,32 @@ import org.springframework.stereotype.Service;
 
 import com.umg.gestionacademica.model.Alumno;
 import com.umg.gestionacademica.repository.AlumnoRepository;
+import com.umg.gestionacademica.dto.AlumnoDTO;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AlumnoService {
-    private final AlumnoRepository repo;
+    private final AlumnoRepository alumnoRepository;
 
-    public AlumnoService(AlumnoRepository repo) {
-        this.repo = repo;
+    public AlumnoService(AlumnoRepository alumnoRepository) {
+        this.alumnoRepository = alumnoRepository;
     }
 
-    public Alumno save(Alumno alumno) { return repo.save(alumno); }
-    public List<Alumno> getAll() { return repo.findAll(); }
-    public Alumno getById(Long id) { return repo.findById(id).orElse(null); }
-    public Alumno update(Long id, Alumno alumno) {
-        alumno.setIdAlumno(id);
-        return repo.save(alumno);
+    private AlumnoDTO convertirADTO(Alumno alumno) {
+        return new AlumnoDTO(alumno.getIdAlumno(), alumno.getNombres(), alumno.getApellidos(), alumno.getEdad());
     }
-    public void delete(Long id) { repo.deleteById(id); }
+
+    public List<AlumnoDTO> obtenerTodos(String apellidos) {
+        List<Alumno> alumnos = (apellidos != null) ?
+                alumnoRepository.findByApellidos(apellidos) : alumnoRepository.findAll();
+        return alumnos.stream().map(this::convertirADTO).collect(Collectors.toList());
+    }
+
+    public AlumnoDTO obtenerPorId(Long id) {
+        return alumnoRepository.findById(id)
+                .map(this::convertirADTO)
+                .orElse(null);
+    }
 }

@@ -2,48 +2,27 @@ package com.umg.gestionacademica.controller;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.umg.gestionacademica.model.Profesor;
+import com.umg.gestionacademica.dto.ProfesorDTO;
 import com.umg.gestionacademica.service.ProfesorService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/profesores")
+@RequestMapping("/api/profesores")
 public class ProfesorController {
+    private final ProfesorService profesorService;
 
-    private final ProfesorService service;
-
-    public ProfesorController(ProfesorService service) {
-        this.service = service;
+    public ProfesorController(ProfesorService profesorService) {
+        this.profesorService = profesorService;
     }
 
-    // Crear profesor
-    @PostMapping
-    public Profesor create(@RequestBody Profesor profesor) {
-        return service.save(profesor);
-    }
-
-    // Obtener todos los profesores
     @GetMapping
-    public List<Profesor> getAll() {
-        return service.getAll();
+    public List<ProfesorDTO> obtenerTodos(@RequestParam(required = false) String especialidad) {
+        return profesorService.obtenerTodos(especialidad);
     }
 
-    // Obtener profesor por ID
     @GetMapping("/{id}")
-    public Profesor getById(@PathVariable Long id) {
-        return service.getById(id);
-    }
-
-    // Actualizar profesor
-    @PutMapping("/{id}")
-    public Profesor update(@PathVariable Long id, @RequestBody Profesor profesor) {
-        return service.update(id, profesor);
-    }
-
-    // Eliminar profesor
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        service.delete(id);
+    public ProfesorDTO obtenerPorId(@PathVariable Long id) {
+        return profesorService.obtenerPorId(id);
     }
 }

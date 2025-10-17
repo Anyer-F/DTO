@@ -14,5 +14,6 @@ public class Alumno {
     private String apellidos;
     private String correo;
     private String telefono;
+    private int edad;
 }
 

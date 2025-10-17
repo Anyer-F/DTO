@@ -4,41 +4,33 @@ import org.springframework.stereotype.Service;
 
 import com.umg.gestionacademica.model.Curso;
 import com.umg.gestionacademica.repository.CursoRepository;
+import com.umg.gestionacademica.dto.CursoDTO;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CursoService {
+    private final CursoRepository cursoRepository;
 
-    private final CursoRepository repo;
-
-    public CursoService(CursoRepository repo) {
-        this.repo = repo;
+    public CursoService(CursoRepository cursoRepository) {
+        this.cursoRepository = cursoRepository;
     }
 
-    // Crear curso
-    public Curso save(Curso curso) {
-        return repo.save(curso);
+    private CursoDTO convertirADTO(Curso curso) {
+        String nombreProfesor = (curso.getProfesor() != null) ? curso.getProfesor().getNombres() + " " + curso.getProfesor().getApellidos() : null;
+        return new CursoDTO(curso.getIdCurso(), curso.getNombre(), curso.getSemestre(), nombreProfesor);
     }
 
-    // Obtener todos los cursos
-    public List<Curso> getAll() {
-        return repo.findAll();
+    public List<CursoDTO> obtenerTodos(Integer semestre) {
+        List<Curso> cursos = (semestre != null) ?
+                cursoRepository.findBySemestre(semestre) : cursoRepository.findAll();
+        return cursos.stream().map(this::convertirADTO).collect(Collectors.toList());
     }
 
-    // Obtener curso por ID
-    public Curso getById(Long id) {
-        return repo.findById(id).orElse(null);
-    }
-
-    // Actualizar curso
-    public Curso update(Long id, Curso curso) {
-        curso.setIdCurso(id);
-        return repo.save(curso);
-    }
-
-    // Eliminar curso
-    public void delete(Long id) {
-        repo.deleteById(id);
+    public CursoDTO obtenerPorId(Long id) {
+        return cursoRepository.findById(id)
+                .map(this::convertirADTO)
+                .orElse(null);
     }
 }

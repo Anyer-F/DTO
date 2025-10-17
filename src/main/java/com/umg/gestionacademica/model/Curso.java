@@ -11,7 +11,7 @@ public class Curso {
     private Long idCurso;
 
     private String nombre;
-    private int creditos;
+    private int semestre;
 
     @ManyToOne
     @JoinColumn(name = "id_profesor")

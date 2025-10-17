@@ -4,41 +4,33 @@ import org.springframework.stereotype.Service;
 
 import com.umg.gestionacademica.model.Profesor;
 import com.umg.gestionacademica.repository.ProfesorRepository;
+import com.umg.gestionacademica.dto.ProfesorDTO;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProfesorService {
+    private final ProfesorRepository profesorRepository;
 
-    private final ProfesorRepository repo;
-
-    public ProfesorService(ProfesorRepository repo) {
-        this.repo = repo;
+    public ProfesorService(ProfesorRepository profesorRepository) {
+        this.profesorRepository = profesorRepository;
     }
 
-    // Crear profesor
-    public Profesor save(Profesor profesor) {
-        return repo.save(profesor);
+    private ProfesorDTO convertirADTO(Profesor profesor) {
+        String nombreCompleto = profesor.getNombres() + " " + profesor.getApellidos();
+        return new ProfesorDTO(profesor.getIdProfesor(), nombreCompleto, profesor.getEspecialidad());
     }
 
-    // Obtener todos los profesores
-    public List<Profesor> getAll() {
-        return repo.findAll();
+    public List<ProfesorDTO> obtenerTodos(String especialidad) {
+        List<Profesor> profesores = (especialidad != null) ?
+                profesorRepository.findByEspecialidad(especialidad) : profesorRepository.findAll();
+        return profesores.stream().map(this::convertirADTO).collect(Collectors.toList());
     }
 
-    // Obtener profesor por ID
-    public Profesor getById(Long id) {
-        return repo.findById(id).orElse(null);
-    }
-
-    // Actualizar profesor
-    public Profesor update(Long id, Profesor profesor) {
-        profesor.setIdProfesor(id);
-        return repo.save(profesor);
-    }
-
-    // Eliminar profesor
-    public void delete(Long id) {
-        repo.deleteById(id);
+    public ProfesorDTO obtenerPorId(Long id) {
+        return profesorRepository.findById(id)
+                .map(this::convertirADTO)
+                .orElse(null);
     }
 }
