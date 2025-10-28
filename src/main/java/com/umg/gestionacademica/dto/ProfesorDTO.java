@@ -7,7 +7,8 @@ import lombok.*;
 @NoArgsConstructor
 public class ProfesorDTO {
     private Long id;
-    private String nombre;
+    private String nombres;
+    private String apellidos;
     private String especialidad;
 }
 

@@ -18,8 +18,7 @@ public class ProfesorService {
     }
 
     private ProfesorDTO convertirADTO(Profesor profesor) {
-        String nombreCompleto = profesor.getNombres() + " " + profesor.getApellidos();
-        return new ProfesorDTO(profesor.getIdProfesor(), nombreCompleto, profesor.getEspecialidad());
+        return new ProfesorDTO(profesor.getIdProfesor(), profesor.getNombres(), profesor.getApellidos(), profesor.getEspecialidad());
     }
 
     public List<ProfesorDTO> obtenerTodos(String especialidad) {
